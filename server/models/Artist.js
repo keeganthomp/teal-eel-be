@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 const { sequelize } = require('../database/Tart')
 
-// model for artists 
+// model for artists
 const Artist = sequelize.define('artist', {
   artistId: {
     allowNull: false,
