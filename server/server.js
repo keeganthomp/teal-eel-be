@@ -34,9 +34,9 @@ Buyer.hasMany(Art, {
     allowNull: true
   }
 })
-Artist.sync().then(() => 'Artists Table Ready')
-Art.sync().then(() => 'Art Table Ready')
-Buyer.sync().then(() => 'Buyer Table Ready')
+Artist.sync({ force: true }).then(() => 'Artists Table Ready')
+Art.sync({ force: true }).then(() => 'Art Table Ready')
+Buyer.sync({ force: true }).then(() => 'Buyer Table Ready')
 
 // requiring token to make any API call
 app.use((req, res, next) => {
