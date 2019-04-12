@@ -1,17 +1,19 @@
-# FROM node:8 as react-build
-# WORKDIR /app
-# COPY . ./
-# RUN yarn
-# RUN yarn build
+FROM node:8
 
-# # Stage 2 - the production environment
-# FROM nginx:alpine
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Create app directory
+WORKDIR /usr/src/app
 
-# RUN mkdir /etc/letsencrypt
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY package*.json ./
 
-# COPY letsencrypt/live/tealeel.com/fullchain.pem /etc/letsencrypt
+RUN npm install
+# If you are building your code for production
+# RUN npm ci --only=production
 
-# COPY letsencrypt/live/tealeel.com/privkey.pem /etc/letsencrypt
+# Bundle app source
+COPY . .
 
-# COPY --from=react-build /app/build /usr/share/nginx/html
+EXPOSE 8080
+CMD [ "npm", "start" ]
