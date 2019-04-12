@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize')
 const { sequelize } = require('../database/Tart')
 
+// model for art pieces
 const Art = sequelize.define('artpieces', {
   artId: {
     allowNull: false,
