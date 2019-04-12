@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 
 let sequelize = new Sequelize('tart', 'keegan', 'hu8jmn3', {
-  host: 'localhost',
+  host: '0.0.0.0',
   dialect: 'postgres',
   pool: {
     max: 5,
