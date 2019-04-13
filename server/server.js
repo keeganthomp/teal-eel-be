@@ -39,7 +39,7 @@ Buyer.hasMany(Art, {
   }
 })
 
-// once artist table is created, then create Art and Buyer tables
+// Need to create these tables in this order due to how they are associated
 Artist.sync().then(() => {
   Buyer.sync().then(() => {
     Art.sync()
