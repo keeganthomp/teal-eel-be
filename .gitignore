@@ -3,3 +3,4 @@ node_modules
 yarn.lock
 nginx/*
 server/helpers/temp/*
+ssl.sh

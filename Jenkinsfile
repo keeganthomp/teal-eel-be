@@ -14,7 +14,7 @@ node {
       sh 'docker -v'
       sh 'printenv'
     }
-    stage('Build Docker test'){
+    stage('Build Docker Image'){
       sh 'groups'
       sh 'docker build -t tealeel-backend -f Dockerfile --no-cache .'
       dockerImage = docker.build("keezee/tealeel-api:${BUILD_NUMBER}")
@@ -24,8 +24,9 @@ node {
         dockerImage.push()
       }
     }
-    stage('Clean Docker test'){
+    stage('Clean Docker Images'){
       sh 'docker rmi tealeel-backend'
+      sh 'docker system prune -a -y'
     }
     stage('Deploy'){
       sshagent(credentials : ['tealeel-backend-server-ssh-credentials']) {
