@@ -1,4 +1,3 @@
-load '.env'
 
 node {
   environment {
