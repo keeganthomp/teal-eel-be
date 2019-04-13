@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const session = require('express-session')
@@ -21,6 +22,9 @@ const { Art } = require('./models/Art')
 const { Artist } = require('./models/Artist')
 const { Buyer } = require('./models/Buyer')
 
+const sessionSecret = process.env.SESSION_SECRET
+const sessionKey = process.env.SESSION_KEY
+
 const port = process.env.PORT || 80
 
 // adding model associations and syncing DB tables
@@ -34,9 +38,9 @@ Buyer.hasMany(Art, {
     allowNull: true
   }
 })
-Artist.sync({ force: true }).then(() => 'Artists Table Ready')
-Art.sync({ force: true }).then(() => 'Art Table Ready')
-Buyer.sync({ force: true }).then(() => 'Buyer Table Ready')
+Artist.sync().then(() => 'Artists Table Ready')
+Art.sync().then(() => 'Art Table Ready')
+Buyer.sync().then(() => 'Buyer Table Ready')
 
 // requiring token to make any API call
 app.use((req, res, next) => {
@@ -61,8 +65,8 @@ app.use((req, res, next) => {
 })
 
 app.use(session({
-  key: 'user_sid',
-  secret: 'ilovescotchscotchyscotchscotch',
+  key: sessionKey,
+  secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
   cookie: {

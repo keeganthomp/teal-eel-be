@@ -108,8 +108,6 @@
     "yup": "^0.26.2"
   },
   "scripts": {
-    "start": "node scripts/start.js",
-    "dev": "node scripts/start.js",
     "start": "node server/server.js",
     "build": "NODE_PATH=./src node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
