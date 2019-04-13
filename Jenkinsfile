@@ -35,8 +35,8 @@ node {
         sh '''
             ssh -o StrictHostKeyChecking=no root@${BACKEND_SERVER_IP} -C\
             docker-compose down &&
-            ssh root@${BACKEND_SERVER_IP} -C\
-            BUILD_NUMBER=${BUILD_NUMBER} docker-compose -f docker-compose.yml up --force-recreate
+            ssh -o StrictHostKeyChecking=no root@${BACKEND_SERVER_IP} -C\
+            BUILD_NUMBER=${BUILD_NUMBER} docker-compose -f docker-compose.yml up -d --force-recreate
         '''
         sh "echo 'new docker image(s) running'"
       }
