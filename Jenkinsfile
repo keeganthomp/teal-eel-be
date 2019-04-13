@@ -29,7 +29,10 @@ node {
     }
     stage('Deploy'){
       sshagent(credentials : ['tealeel-backend-server-ssh-credentials']) {
-        sh 'ssh root@104.248.130.53'
+        sh "docker pull keezee/tealeel-api:${BUILD_NUMBER}"
+        sh "docker stop tealeel-frontend-app"
+        sh "docker rm tealeel-frontend-app"
+        sh "docker run --name=tealeel-frontend-app --restart=always -d keezee/tealeel-api:${BUILD_NUMBER}"
       }
     }
   }
