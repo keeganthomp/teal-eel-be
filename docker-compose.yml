@@ -1,3 +1,4 @@
+# docker compose config for the backend
 version: "2"
 services:
   app: 
