@@ -1,7 +1,7 @@
 FROM node:8
-RUN mkdir /practice_docker
-ADD . /practice_docker
-WORKDIR /practice_docker
+RUN mkdir /tealeel-api
+ADD . /tealeel-api
+WORKDIR /tealeel-api
 RUN npm install pm2 -g
 RUN npm i
 EXPOSE 3000
