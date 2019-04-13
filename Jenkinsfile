@@ -34,8 +34,8 @@ node {
         sh 'scp docker-compose.yml root@${BACKEND_SERVER_IP}:~'
         sh '''
             ssh -o StrictHostKeyChecking=no root@${BACKEND_SERVER_IP} -C\
-            ls &&
-            pwd
+            docker-compose down &&
+            BUILD_NUMBER=58 docker-compose -f docker-compose.yml up --force-recreate
         '''
       }
     }
