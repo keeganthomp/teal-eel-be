@@ -31,6 +31,7 @@ node {
     }
     stage('Deploy'){
       sshagent(credentials : ['tealeel-backend-server-ssh-credentials']) {
+        sh 'scp docker-compose.yml root@${BACKEND_SERVER_IP}:~'
         sh '''
             ssh -o StrictHostKeyChecking=no root@${BACKEND_SERVER_IP} -C\
             ls &&
