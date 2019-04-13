@@ -26,7 +26,7 @@ node {
     }
     stage('Clean Docker Images'){
       sh 'docker rmi tealeel-backend'
-      sh 'docker system prune -a -y'
+      sh 'yes | docker system prune -a'
     }
     stage('Deploy'){
       sshagent(credentials : ['tealeel-backend-server-ssh-credentials']) {
