@@ -1,3 +1,5 @@
+load '.env'
+
 node {
   environment {
     REGISTRY = "keezee/tealeel"
@@ -31,7 +33,7 @@ node {
     stage('Deploy'){
       sshagent(credentials : ['tealeel-backend-server-ssh-credentials']) {
         sh '''
-            ssh -o StrictHostKeyChecking=no root@142.93.241.62 -C\
+            ssh -o StrictHostKeyChecking=no root@${BACKEND_SERVER_IP} -C\
             ls &&
             pwd
         '''
