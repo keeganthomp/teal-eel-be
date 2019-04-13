@@ -1,15 +1,23 @@
+require('dotenv').config()
 const Sequelize = require('sequelize')
 
-let sequelize = new Sequelize('tart', 'keegan', 'hu8jmn3', {
-  host: 'localhost',
-  dialect: 'postgres',
-  pool: {
-    max: 5,
-    min: 0,
-    acquire: 30000,
-    idle: 10000
+const isProdution = process.env.NODE_ENV === 'production'
+const productionDbConfig = process.env.DATABASE_URL
+const dbUser = process.env.POSTGRES_USER
+const dbPassword = process.env.POSTGRES_PASSWORD
+
+console.log('IS PRODUCITON:', isProdution)
+
+const sequelizeConfig = isProdution
+  ? productionDbConfig
+  : {
+    database: 'tart',
+    username: dbUser,
+    password: dbPassword,
+    dialect: 'postgres'
   }
-})
+
+const sequelize = new Sequelize(sequelizeConfig)
 
 module.exports = {
   sequelize

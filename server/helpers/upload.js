@@ -61,6 +61,7 @@ const uploadToS3 = (props) => {
                     message: 'Successfully updated profile image',
                     updatedProfileImage: artistWithUpdatedProfilePicture.avatar
                   })
+                  fs.unlink(path.join(__dirname + `/temp/${fileName}`))
                 } else {
                   res.status(400).json({
                     error: 'UNABLE TO UPDATE ARTIST PROFILE'

@@ -1,3 +1,4 @@
+
 node {
   environment {
     REGISTRY = "keezee/tealeel"
@@ -8,32 +9,36 @@ node {
     stage('Checkout') {
       checkout scm
     }
-    stage('Environment') {
+    stage('Check Environment') {
       sh 'git --version'
       echo "Branch: ${env.BRANCH_NAME}"
       sh 'docker -v'
       sh 'printenv'
-      echo "BUILDDDD: ${BUILD_NUMBER}"
     }
-    stage('Build Docker test'){
+    stage('Build Docker Image'){
       sh 'groups'
-      sh 'docker build -t react-test -f Dockerfile --no-cache .'
-      dockerImage = docker.build("keezee/tealeel:${BUILD_NUMBER}")
+      sh 'docker build -t tealeel-backend -f Dockerfile --no-cache .'
+      dockerImage = docker.build("keezee/tealeel-api:${BUILD_NUMBER}")
     }
     stage('Push Docker image'){
       docker.withRegistry( 'https://registry.hub.docker.com', 'docker_registry_server') {
         dockerImage.push()
       }
     }
-    stage('Clean Docker test'){
-      sh 'docker rmi react-test'
+    stage('Clean Docker Images'){
+      sh 'docker rmi tealeel-backend'
+      sh 'yes | docker system prune -a'
     }
     stage('Deploy'){
-      if(env.BRANCH_NAME == 'master'){
-        sh 'docker build -t react-app --no-cache .'
-        sh 'docker tag react-app localhost:5000/react-app'
-        sh 'docker push localhost:5000/react-app'
-        sh 'docker rmi -f react-app localhost:5000/react-app'
+      sshagent(credentials : ['tealeel-backend-server-ssh-credentials']) {
+        sh 'scp docker-compose.yml root@${BACKEND_SERVER_IP}:~'
+        sh '''
+            ssh -o StrictHostKeyChecking=no root@${BACKEND_SERVER_IP} -C\
+            docker-compose down &&
+            ssh -o StrictHostKeyChecking=no root@${BACKEND_SERVER_IP} -C\
+            BUILD_NUMBER=${BUILD_NUMBER} docker-compose -f docker-compose.yml up -d --force-recreate
+        '''
+        sh "echo 'new docker image(s) running'"
       }
     }
   }
