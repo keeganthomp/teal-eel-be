@@ -41,8 +41,9 @@ Buyer.hasMany(Art, {
 
 // once artist table is created, then create Art and Buyer tables
 Artist.sync().then(() => {
-  Art.sync()
-  Buyer.sync()
+  Buyer.sync().then(() => {
+    Art.sync()
+  })
 })
 
 // requiring token to make any API call
