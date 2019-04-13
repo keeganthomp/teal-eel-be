@@ -28,7 +28,7 @@ node {
       sh 'docker rmi tealeel-backend'
     }
     stage('Deploy'){
-      shagent(credentials : ['tealeel-backend-server-ssh-credentials']) {
+      sshagent(credentials : ['tealeel-backend-server-ssh-credentials']) {
         sh 'ssh root@104.248.130.53'
       }
     }
