@@ -8,7 +8,7 @@ node {
     stage('Checkout') {
       checkout scm
     }
-    stage('Environment') {
+    stage('Check Environment') {
       sh 'git --version'
       echo "Branch: ${env.BRANCH_NAME}"
       sh 'docker -v'
