@@ -5,7 +5,7 @@ services:
     image: keezee/tealeel-api:${BUILD_NUMBER}
     container_name: app
     env_file:
-      - .env
+      - .env.list
     command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; npm start'
     depends_on:
       - db
@@ -15,7 +15,7 @@ services:
     image: postgres:10
     restart: always
     env_file:
-      - .env
+      - .env.list
     ports:
       - 5432:5432
     volumes:
