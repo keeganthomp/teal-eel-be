@@ -9,6 +9,8 @@ const { Art } = require('../models/Art')
 const { Artist } = require('../models/Artist')
 
 // config for AWS s3 bucket
+console.log('EWRWEEWRWER', process.env.AWS_ACCESS_KEY)
+console.log('ERWER', process.env.AWS_SECRET_ACCESS_KEY)
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -31,6 +33,7 @@ const uploadToS3 = (props) => {
       // image names cannot have '+' signs in the file name
       const imageToUpload = fs.createReadStream(path.join(__dirname + `/temp/${fileName}`))
       if (err && (err.code !== 'BucketAlreadyOwnedByYou' || err.BucketAlreadyOwnedByYou)) {
+        console.log('ERROR 1', err)
         res.status(400).json({
           error: 'Unable to upload image'
         })
@@ -45,6 +48,7 @@ const uploadToS3 = (props) => {
         }
         s3.upload(params, (err, data) => {
           if (err) {
+            console.log('ERROR 2', err)
             console.log('ERRRR:', err)
             res.status(400).json({
               error: 'Unable to upload image'
