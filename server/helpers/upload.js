@@ -2,7 +2,6 @@ const path = require('path')
 const fs = require('fs')
 const AWS = require('aws-sdk')
 const uuidv1 = require('uuid/v1')
-const s3 = new AWS.S3()
 
 // importing db models
 const { Art } = require('../models/Art')
@@ -16,10 +15,12 @@ AWS.config.update({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   'region': 'sa-east-1'
 })
+const s3 = new AWS.S3()
 
 const uploadToS3 = (props) => {
   const { base64encodedImage, fileName, bucket, res, userId } = props
   const myBucket = bucket
+  console.log('MY BUCKET', myBucket)
   const imageForDisk = base64encodedImage.split(';base64,').pop()
   const  tempDirectory = __dirname + '/temp'
   if (!fs.existsSync(tempDirectory)){
