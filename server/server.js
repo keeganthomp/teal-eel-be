@@ -86,7 +86,7 @@ app.use((req, res, next) => {
   const origin = req.headers.origin
   const isOriginAllowed = allowedOrigins.includes(origin)
   if (isOriginAllowed) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5300')
+    res.setHeader('Access-Control-Allow-Origin', origin)
   }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, authorization')
