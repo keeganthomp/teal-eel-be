@@ -25,7 +25,9 @@ const { Buyer } = require('./models/Buyer')
 const sessionSecret = process.env.SESSION_SECRET
 const sessionKey = process.env.SESSION_KEY
 
-const port = process.env.PORT || 80
+const port = process.env.NODE_ENV === 'production'
+  ? (process.env.PORT || 80)
+  : 5000
 
 // adding model associations and syncing DB tables
 Art.belongsTo(Artist, {
@@ -77,14 +79,25 @@ app.use(session({
     expires: 600000
   }
 }))
-
+app.use((req, res, next) => {
+  const origin = req.get('origin');
+  res.header('Access-Control-Allow-Origin', origin);
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma');
+  // intercept OPTIONS method
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(204);
+  } else {
+    next();
+  }
+});
+app.use(cors())
 app.use(bodyParser.json({ limit: '50mb', extended: true }))
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(cors())
 app.use(express.static(__dirname + '/public'))
 app.use( express.static( `${__dirname}/../build` ))
 app.use(express.static(__dirname, { dotfiles: 'allow' } ))
-
 app.get('/api/artists', artistQueries.getAllArtists)
 app.get('/api/artist/:username', artistQueries.getArtist)
 app.get('/api/artist/id/:id', artistQueries.getArtistFromId)
