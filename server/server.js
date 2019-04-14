@@ -2,7 +2,6 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const session = require('express-session')
-const cors = require('cors')
 const router = express.Router()
 const app = express()
 const https = require('https')
@@ -80,24 +79,21 @@ app.use(session({
     expires: 600000
   }
 }))
-app.use(cors())
+// setting up CORS config
 app.use((req, res, next) => {
-
-  // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
-  // Request methods you wish to allow
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-  // Request headers you wish to allow
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-  // Set to true if you need the website to include cookies in the requests sent
+  // websites allowed to connect to API
+  const allowedOrigins = ['http://localhost:5300', 'https://www.tealeel.com']
+  const origin = req.headers.origin
+  const isOriginAllowed = allowedOrigins.includes(origin)
+  if (isOriginAllowed) {
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5300')
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, authorization')
+  // set to true if you need the website to include cookies in the requests sent
   // to the API (e.g. in case you use sessions)
-  res.setHeader('Access-Control-Allow-Credentials', true);
-
-  // Pass to next layer of middleware
-  next();
+  res.setHeader('Access-Control-Allow-Credentials', true)
+  next()
 })
 app.use(bodyParser.json({ limit: '50mb', extended: true }))
 app.use(bodyParser.urlencoded({ extended: true }))
