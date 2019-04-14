@@ -52,12 +52,13 @@ Artist.sync().then(() => {
 app.use((req, res, next) => {
   const isSignupRoute = req.path === '/api/artist/signup'
   const isLoginRoute = req.path ==='/api/artist/login'
+  const isOnHomePage = req.headers.referer === 'http://localhost:5300/' || `https://${'www.tealeel' || 'tealeel'}.com`
   // check header or url parameters or post parameters for token
   let token = req.headers['authorization']
   if (!token) return next() //if no token, continue
   token = token.replace('Bearer ', '')
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err && !isSignupRoute && !isLoginRoute) {
+    if (err && !isSignupRoute && !isLoginRoute && !isOnHomePage) {
       return res.status(401).json({
         success: false,
         message: 'Please register Log in using a valid email to submit posts'
@@ -79,19 +80,6 @@ app.use(session({
     expires: 600000
   }
 }))
-app.use((req, res, next) => {
-  const origin = req.get('origin');
-  res.header('Access-Control-Allow-Origin', origin);
-  res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Methods', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma');
-  // intercept OPTIONS method
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(204);
-  } else {
-    next();
-  }
-});
 app.use(cors())
 app.use(bodyParser.json({ limit: '50mb', extended: true }))
 app.use(bodyParser.urlencoded({ extended: true }))
