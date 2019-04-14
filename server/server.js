@@ -25,7 +25,9 @@ const { Buyer } = require('./models/Buyer')
 const sessionSecret = process.env.SESSION_SECRET
 const sessionKey = process.env.SESSION_KEY
 
-const port = process.env.PORT || 80
+const port = process.env.NODE_ENV === 'production'
+  ? (process.env.PORT || 80)
+  : 5000
 
 // adding model associations and syncing DB tables
 Art.belongsTo(Artist, {
@@ -50,12 +52,13 @@ Artist.sync().then(() => {
 app.use((req, res, next) => {
   const isSignupRoute = req.path === '/api/artist/signup'
   const isLoginRoute = req.path ==='/api/artist/login'
+  const isOnHomePage = req.headers.referer === 'http://localhost:5300/' || `https://${'www.tealeel' || 'tealeel'}.com`
   // check header or url parameters or post parameters for token
   let token = req.headers['authorization']
   if (!token) return next() //if no token, continue
   token = token.replace('Bearer ', '')
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err && !isSignupRoute && !isLoginRoute) {
+    if (err && !isSignupRoute && !isLoginRoute && !isOnHomePage) {
       return res.status(401).json({
         success: false,
         message: 'Please register Log in using a valid email to submit posts'
@@ -77,14 +80,12 @@ app.use(session({
     expires: 600000
   }
 }))
-
+app.use(cors())
 app.use(bodyParser.json({ limit: '50mb', extended: true }))
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(cors())
 app.use(express.static(__dirname + '/public'))
 app.use( express.static( `${__dirname}/../build` ))
 app.use(express.static(__dirname, { dotfiles: 'allow' } ))
-
 app.get('/api/artists', artistQueries.getAllArtists)
 app.get('/api/artist/:username', artistQueries.getArtist)
 app.get('/api/artist/id/:id', artistQueries.getArtistFromId)
