@@ -44,7 +44,7 @@ const createStripeConnectAccount = (req, res) => {
   return axios ({
     method: 'POST',
     url: 'https://connect.stripe.com/oauth/token',
-    headers: { 
+    headers: {
       'Content-Type': 'application/json'
     },
     data: {
