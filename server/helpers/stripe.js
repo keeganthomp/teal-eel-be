@@ -2,6 +2,9 @@ const plaid = require('plaid')
 const stripe = require('stripe')(process.env.REACT_APP_STRIPE_KEY)
 const axios = require('axios')
 const { Artist } = require('../models/Artist')
+const { Buyer } = require('../models/Buyer')
+const omit = require('lodash/omit')
+const uuidv1 = require('uuid/v1')
 
 const createStripeCustomer = (tokenID) => {
   stripe.customers.create({
@@ -21,11 +24,9 @@ const grabStripeToken = (req, res) => {
     process.env.REACT_APP_PLAID_PUBLIC_KEY,
     plaid.environments.sandbox)
   plaidClient.exchangePublicToken(accesToken, (exchangeError, exchangeRepsonse) => {
-    console.log('ERR:', exchangeError)
     const accessToken = exchangeRepsonse.access_token
     // Generate a bank account token
     plaidClient.createStripeToken(accessToken, accountId, (stripeTokenError, stripeTokenRepsonse) => {
-      console.log('WOOOOO"', stripeTokenRepsonse)
       const bankAccountToken = stripeTokenRepsonse.stripe_bank_account_token
       if (!stripeTokenError) {
         res.json({
@@ -57,39 +58,74 @@ const createStripeConnectAccount = (req, res) => {
     Artist.update(
       { stripeId: userIdFromStripe },
       { 
+        returning: true,
         where: {
           artistId
         } 
       }
-    )
+    ).then(([rowsUpdated, [artistWithStripId]]) => {
+        res.json({
+        status: 200,
+        artist: omit(artistWithStripId.dataValues, ['password'])
+      })
+    })
   }).catch(e => console.log('ERROR WHEN CREATING WITH STRIPE:"', e))
 }
 
 const createChargeAndTransfer = (req, res) => {
+  const { buyer, amount, seller } = req.body
   stripe.charges.create({
-    amount: 100,
+    amount: amount,
     currency: 'usd',
-    source: 'tok_visa',
+    customer: buyer,
     transfer_data: {
-      destination: 'acct_1EEefGFL7TQYKsIK'
+      destination: seller
     }
   }).then(function(charge) {
     console.log('STRIPE CHaRGE:', charge)
-  })
+  }).catch(err => console.log('STRIPE CHARGE ERROR', err))
+}
+
+const retriveCustomerPaymentInfo = (req, res) => {
+  const customerId = req.params.customerId
+  stripe.customers.retrieve(
+    customerId,
+    (err, customer) => {
+      if (customer){
+      const defaultPaymentInfo = customer.sources.data
+      res.json({
+        status: 200,
+        customerPaymentInfo: defaultPaymentInfo
+      })
+    }
+    }
+  )
 }
 
 const createStripeBuyer = async (req, res) => {
-  const { token, userId } = req.body
+  const { token, userId, email } = req.body
   try {
     // create a buyer from the token created from stripe on front end
-    const buyer = await stripe.customers.create({
+    await stripe.customers.create({
       source: token,
-      email: 'boujiboi@gmail.com'
-    })
-    // if successful, send the new buyer info up to the FE
-    res.json({
-      status: 200,
-      buyer
+      email: email || null,
+      description: userId
+    }).then((buyer) => {
+      const buyerPayload = {
+        buyerId: uuidv1(),
+        stripeToken: buyer.id,
+        username: buyer.email
+      }
+      // if successful, send the new buyer info up to the FE
+      Buyer.create(buyerPayload).then(buyerFromDb => {
+        if (buyerFromDb) {
+          res.status(200).json({
+            status: 'success',
+            message: 'Created New Buyer',
+            buyer: buyerFromDb
+          })
+        }
+      })
     })
   } catch (err) {
     res.status(500).end()
@@ -100,5 +136,6 @@ const createStripeBuyer = async (req, res) => {
 module.exports = {
   createStripeConnectAccount,
   createChargeAndTransfer,
-  createStripeBuyer
+  createStripeBuyer,
+  retriveCustomerPaymentInfo
 }
