@@ -7,10 +7,18 @@ const Buyer = sequelize.define('buyers', {
     primaryKey: true,
     type: Sequelize.UUID
   },
-  stripeToken: {
+  username: {
     type: Sequelize.STRING
   },
-  username: {
+  password: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  phone: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  stripeToken: {
     type: Sequelize.STRING
   }
 })
