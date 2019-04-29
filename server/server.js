@@ -10,9 +10,16 @@ const jwt = require('jsonwebtoken')
 
 const artistQueries = require('./queries/artistQueries')
 const artQueries = require('./queries/artQueries')
+const buyerQueries = require('./queries/buyerQueries')
+const userQueries = require('./queries/userQueries')
 const { fileUpload } = require('./helpers/upload')
 const validation = require('./helpers/validation')
-const { createStripeConnectAccount, createChargeAndTransfer, createStripeBuyer, retriveCustomerPaymentInfo } = require('./helpers/stripe')
+const {
+  createStripeConnectAccount,
+  createChargeAndTransfer,
+  createStripeBuyer,
+  retriveCustomerPaymentInfo
+} = require('./helpers/stripe')
 const { scheduleTextMessage } = require('./helpers/smsScheduler')
 const { httpsOptions } = require('./helpers/utils')
 
@@ -41,9 +48,9 @@ Buyer.hasMany(Art, {
 })
 
 // Need to create these tables in this order due to how they are associated
-Artist.sync().then(() => {
-  Buyer.sync().then(() => {
-    Art.sync()
+Artist.sync({ force: true }).then(() => {
+  Buyer.sync({ force: true }).then(() => {
+    Art.sync({ force: true })
   })
 })
 
@@ -109,7 +116,9 @@ app.get('/api/artist/art/:id', artistQueries.getArtistArt)
 app.get('/api/customer/payment/info/:customerId', retriveCustomerPaymentInfo)
 
 app.post('/api/artist/signup', artistQueries.createArtist)
-app.post('/api/artist/login', artistQueries.getArtistLogin)
+app.post('/api/buyer/signup', buyerQueries.createBuyer)
+app.post('/api/user/login', userQueries.getUserLogin)
+// app.post('/api/buyer/login', buyerQueries.getBuyerLogin)
 app.post('/api/me/from/token', validation.verifyUser)
 app.post('/api/logout', validation.logout)
 app.post('/api/schedule/message', scheduleTextMessage)

@@ -44,30 +44,6 @@ const getAllArtists = (req, res) => {
   })
 }
 
-const getArtistLogin = (req, res) => {
-  const { username, password } = req.body
-  Artist.findOne({
-    where: {
-      username
-    }
-  }).then(artist => {
-    if (artist && validPassword(password, artist.dataValues.password)) {
-      const artistData = omit(artist.dataValues, ['password']) 
-      req.session.user = artistData
-      const token = generateToken(artistData)
-      res.json({
-        status: 200,
-        artist: artistData,
-        token
-      })
-    } else {
-      res.status(400).json({
-        error: 'Incorrect username or password'
-      })
-    }
-  })
-}
-
 const getArtist = (req, res) => {
   Artist.findOne({
     where: {
@@ -122,7 +98,6 @@ const getArtistArt = (req, res) => {
 module.exports = {
   getAllArtists,
   createArtist,
-  getArtistLogin,
   getArtist,
   getArtistFromId,
   getArtistArt

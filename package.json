@@ -46,6 +46,7 @@
     "formik": "^1.0.3",
     "fs": "^0.0.1-security",
     "fs-extra": "3.0.1",
+    "helmet-csp": "^2.7.1",
     "html-webpack-plugin": "^4.0.0-beta.4",
     "jest": "20.0.4",
     "jsonwebtoken": "^8.4.0",

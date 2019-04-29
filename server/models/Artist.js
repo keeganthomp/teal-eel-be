@@ -23,22 +23,8 @@ const Artist = sequelize.define('artist', {
     type: Sequelize.STRING,
     allowNull: true
   },
-  first_name: {
-    type: Sequelize.STRING,
-    allowNull: true
-  },
-  last_name: {
-    type: Sequelize.STRING,
-    allowNull: true
-  },
-  specialty: {
-    type: Sequelize.STRING
-  },
   location: {
     type: Sequelize.STRING
-  },
-  age: {
-    type: Sequelize.INTEGER
   },
   avatar: {
     type: Sequelize.STRING

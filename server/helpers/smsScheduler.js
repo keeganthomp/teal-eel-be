@@ -10,11 +10,10 @@ const scheduleTextMessage = (req) => {
       .create({
         body: message,
         from: `+${process.env.REACT_APP_TWILIO_PHONE_NUMBER}`,
-        to: `+${phoneNumber}`
-      }).then(message => console.log('message sent:', message))
+        to: `${phoneNumber}`
+      }).then(message => console.log('message sent:', message)).catch(err => console.log('ERROR SENDING TEXT', err))
   }
-  const biddengEndTime = new Date(time*1000).getTime() + (100 * 1000)
-  schedule.scheduleJob(biddengEndTime, () => sendTextMessage())
+  sendTextMessage()
 }
 
 module.exports = {

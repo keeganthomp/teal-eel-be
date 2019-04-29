@@ -83,7 +83,7 @@ const createChargeAndTransfer = (req, res) => {
     }
   }).then(function(charge) {
     console.log('STRIPE CHaRGE:', charge)
-  }).catch(err => console.log('STRIPE CHARGE ERROR', err))
+  }).catch(err => console.log('STRIPE CHARGE ERROR'))
 }
 
 const retriveCustomerPaymentInfo = (req, res) => {
