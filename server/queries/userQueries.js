@@ -42,7 +42,6 @@ const getUserLogin = (req, res) => {
         token
       })
     // if there is not a record in either table, then the user does not exist
-    // or the information entered was incorrect
     } else {
       res.status(400).json({
         error: 'Incorrect username or password'
